@@ -2,6 +2,7 @@ package com.example.demo.controller;
 
 import com.example.demo.dao.UtilisateurDao;
 import com.example.demo.model.Utilisateur;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -40,7 +41,8 @@ public class UtilisateurController {
     }
 
     @PostMapping("/utilisateur")
-    public ResponseEntity<Utilisateur> create(@RequestBody Utilisateur utilisateur) {
+    public ResponseEntity<Utilisateur> create(
+            @RequestBody @Valid Utilisateur utilisateur) {
 
         //on force l'id à null au cas où le client en aurait fourni un
         utilisateur.setId(null);
@@ -50,7 +52,8 @@ public class UtilisateurController {
     }
 
     @PutMapping("/utilisateur/{id}")
-    public ResponseEntity<Utilisateur> update(@RequestBody Utilisateur utilisateur, @PathVariable Integer id) {
+    public ResponseEntity<Utilisateur> update(
+            @RequestBody @Valid Utilisateur utilisateur, @PathVariable Integer id) {
 
         //on force le changement de l'id de l'utilisateur à enregitrer à l'id passé en paramètre
         utilisateur.setId(id);
