@@ -4,8 +4,8 @@ INSERT INTO status (designation) VALUES
 ("absent");
 
 INSERT INTO utilisateur (email, password, administrateur, status_id) VALUES
-("a@a.com", 1, "root", 1) ,
-("b@b.com", 0,  "azerty", 3);
+("a@a.com",  "root",1, 1) ,
+("b@b.com",  "azerty",0,  3);
 
 INSERT INTO competence (nom) VALUES
 ("JAVA"),
