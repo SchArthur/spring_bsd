@@ -22,6 +22,8 @@ public class UtilisateurController {
     @GetMapping("/utilisateur")
     public List<Utilisateur> getAll() {
 
+
+
         return utilisateurDao.findAll();
 
     }
