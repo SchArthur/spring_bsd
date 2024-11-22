@@ -42,7 +42,7 @@ public class Utilisateur {
     @ManyToOne
     Status status;
 
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
             name = "competence_utilisateur",
             inverseJoinColumns = @JoinColumn(name = "competence_id")

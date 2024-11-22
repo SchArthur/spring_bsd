@@ -16,6 +16,10 @@ public class AppUserDetails implements UserDetails {
         this.utilisateur = utilisateur;
     }
 
+    public Utilisateur getUtilisateur() {
+        return utilisateur;
+    }
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
 

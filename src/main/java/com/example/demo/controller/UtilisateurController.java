@@ -2,12 +2,17 @@ package com.example.demo.controller;
 
 import com.example.demo.dao.UtilisateurDao;
 import com.example.demo.model.Utilisateur;
+import com.example.demo.security.AppUserDetails;
+import com.example.demo.security.IsAdmin;
+import com.example.demo.security.IsUser;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
+import java.security.Principal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -19,6 +24,7 @@ public class UtilisateurController {
     @Autowired
     private UtilisateurDao utilisateurDao;
 
+    @IsUser
     @GetMapping("/utilisateur")
     public List<Utilisateur> getAll() {
 
@@ -28,6 +34,7 @@ public class UtilisateurController {
 
     }
 
+    @IsUser
     @GetMapping("/utilisateur/{id}")
     public ResponseEntity<Utilisateur> get(@PathVariable Integer id) {
 
@@ -42,6 +49,7 @@ public class UtilisateurController {
        return new ResponseEntity<>(optionalUtilisateur.get(),HttpStatus.OK);
     }
 
+    @IsAdmin
     @PostMapping("/utilisateur")
     public ResponseEntity<Utilisateur> create(
             @RequestBody @Valid Utilisateur utilisateur) {
@@ -53,6 +61,7 @@ public class UtilisateurController {
         return new ResponseEntity<>(utilisateur, HttpStatus.CREATED);
     }
 
+    @IsAdmin
     @PutMapping("/utilisateur/{id}")
     public ResponseEntity<Utilisateur> update(
             @RequestBody @Valid Utilisateur utilisateur, @PathVariable Integer id) {
@@ -73,6 +82,7 @@ public class UtilisateurController {
         return new ResponseEntity<>(utilisateur, HttpStatus.OK);
     }
 
+    @IsAdmin
     @DeleteMapping("/utilisateur/{id}")
     public ResponseEntity<Utilisateur> delete(@PathVariable Integer id) {
 
@@ -87,6 +97,17 @@ public class UtilisateurController {
         utilisateurDao.deleteById(id);
 
         return new ResponseEntity<>(optionalUtilisateur.get(), HttpStatus.OK);
+
+    }
+
+    @IsUser
+    @GetMapping("/profil")
+    public ResponseEntity<Utilisateur> profil(@AuthenticationPrincipal AppUserDetails userDetails) {
+
+        Utilisateur utilisateur = userDetails.getUtilisateur();
+        utilisateur.setPassword(null);
+
+        return ResponseEntity.ok(userDetails.getUtilisateur());
 
     }
 
