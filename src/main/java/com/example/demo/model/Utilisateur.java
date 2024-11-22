@@ -37,6 +37,8 @@ public class Utilisateur {
     @NotBlank(message = "Le mot de passe ne peut pas être vide")
     String password;
 
+    boolean administrateur;
+
     @ManyToOne
     Status status;
 
