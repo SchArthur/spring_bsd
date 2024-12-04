@@ -1,6 +1,7 @@
 package com.example.demo.controller;
 
 import com.example.demo.dao.CompetenceDao;
+import com.example.demo.dto.StatistiqueCompetenceDto;
 import com.example.demo.model.Competence;
 import com.example.demo.view.CompetenceView;
 import com.fasterxml.jackson.annotation.JsonView;
@@ -9,8 +10,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @CrossOrigin
 @RestController
@@ -86,6 +86,26 @@ public class CompetenceController {
 
         return new ResponseEntity<>(optionalCompetence.get(), HttpStatus.OK);
 
+    }
+
+    @GetMapping("/statistique-competence")
+    public List<StatistiqueCompetenceDto> getStatCompetence() {
+        return competenceDao.nombrePersonneParCompetence();
+
+
+//        ArrayList<Map<String, Object>> resultat = new ArrayList<>();
+//
+//        List<Competence> listeCompetence = competenceDao.findAll();
+//
+//        for(Competence competence : listeCompetence) {
+//
+//            Map<String,Object> competenceJson = new HashMap<>();
+//            competenceJson.put("nom", competence.getNom());
+//            competenceJson.put("nombrePersonne", competence.getUtilisateurs().size());
+//            resultat.add(competenceJson);
+//        }
+//
+//        return resultat;
     }
 
 }
