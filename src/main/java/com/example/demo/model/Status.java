@@ -1,5 +1,7 @@
 package com.example.demo.model;
 
+import com.example.demo.view.CompetenceView;
+import com.fasterxml.jackson.annotation.JsonView;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -19,5 +21,6 @@ public class Status {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Integer id;
 
+    @JsonView(CompetenceView.class)
     String designation;
 }

@@ -1,13 +1,17 @@
 package com.example.demo.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import com.example.demo.view.CompetenceView;
+import com.example.demo.view.UtilisateurAvecCompetenceView;
+import com.example.demo.view.UtilisateurView;
+import com.fasterxml.jackson.annotation.JsonView;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -18,7 +22,13 @@ public class Competence {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @JsonView(CompetenceView.class)
     Integer id;
 
+    @JsonView({UtilisateurAvecCompetenceView.class, CompetenceView.class})
     String nom;
+
+    @ManyToMany(mappedBy = "competences")
+    @JsonView(CompetenceView.class)
+    List<Utilisateur> utilisateurs = new ArrayList<>();
 }
