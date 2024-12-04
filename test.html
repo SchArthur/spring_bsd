@@ -1,49 +1,68 @@
-<form onsubmit="onConnexion(); return false; ">
-  <input type="text" value="a@a.com" id="email">
-  <input type="password" value="root" id="password">
-  <input type="submit" value="connexion">
-</form>
+<!DOCTYPE html>
+<html lang="en">
 
-<button onclick="chargementDonnees()">Charger les données</button>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
 
-<ul id="liste-utilisateur">
-</ul>
+<body>
+  <form id="formulaire-connexion" onsubmit="return onConnexion();">
+    <input type="email" id="champs-email">
+    <input type="password" id="champs-password">
+    <button>Se connecter</button>
+  </form>
+
+  <section id="statistiques">
+    <ul>
+
+    </ul>
+  </section>
+</body>
 
 <script>
 
-  function onConnexion() {
+  init();
 
-    const email = document.getElementById("email").value
-    const password = document.getElementById("password").value
+  function init() {
 
-    const utilisateur = { email, password };
-    const jsonUtilisateur = JSON.stringify(utilisateur)
+    //si l'utilisateur est connecté
+    if (localStorage.getItem("jwt") != null) {
+      const formulaireConnexion = document.getElementById("formulaire-connexion")
+      formulaireConnexion.style.display = "none"
 
-    fetch("http://localhost:8080/connexion", {
-      method: "POST",
-      body: jsonUtilisateur,
-      headers: { "content-type": "application/json" }
-    })
-      .then(resultat => resultat.text())
-      .then(jwt => localStorage.setItem('jwt', jwt));
+      const ulCompetence = document.querySelector("#statistiques ul")
+      ulCompetence.innerHTML = ""
+
+      fetch("http://localhost:8080/statistique-competence")
+        .then(resultat => resultat.json())
+        .then(listeCompetence => {
+
+          for (competence of listeCompetence) {
+            const liCompetence = document.createElement("li")
+            liCompetence.innerHTML = competence.nom + " possédée par " +
+              competence.nombrePersonne + " personne(s)"
+
+            ulCompetence.appendChild(liCompetence)
+          }
+        })
+    }
 
   }
 
-  function chargementDonnees() {
+  function onConnexion() {
 
-    fetch("http://localhost:8080/utilisateur", { headers: { Authorization: "Bearer " + localStorage.getItem('jwt') } })
-      .then(resultat => resultat.json())
-      .then(liste => {
-
-        const ul = document.getElementById("liste-utilisateur")
-
-        liste.forEach(utilisateur => {
-          const li = document.createElement("li")
-          li.innerHTML = utilisateur.email
-          ul.appendChild(li)
-        });
-
+    fetch("http://localhost:8080/connexion")
+      .then(reponse => reponse.text())
+      .then(jwt => {
+        localStorage.setItem("jwt", jwt)
+        init()
       })
+
+    return false;
   }
 
 </script>
+
+</html>
