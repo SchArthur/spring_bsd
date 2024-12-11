@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+
+<body>
+  <form onsubmit="return onConnexion();">
+    <input type="email" id="champs-email">
+    <input type="password" id="champs-password">
+    <button>Se connecter</button>
+  </form>
+</body>
+
+<script>
+
+  function onConnexion() {
+
+    fetch("http://localhost:8080/connexion")
+      .then(reponse => reponse.json())
+
+    return false;
+  }
+
+</script>
+
+</html>

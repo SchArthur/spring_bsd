@@ -1,0 +1,49 @@
+<form onsubmit="onConnexion(); return false; ">
+  <input type="text" value="a@a.com" id="email">
+  <input type="password" value="root" id="password">
+  <input type="submit" value="connexion">
+</form>
+
+<button onclick="chargementDonnees()">Charger les données</button>
+
+<ul id="liste-utilisateur">
+</ul>
+
+<script>
+
+  function onConnexion() {
+
+    const email = document.getElementById("email").value
+    const password = document.getElementById("password").value
+
+    const utilisateur = { email, password };
+    const jsonUtilisateur = JSON.stringify(utilisateur)
+
+    fetch("http://localhost:8080/connexion", {
+      method: "POST",
+      body: jsonUtilisateur,
+      headers: { "content-type": "application/json" }
+    })
+      .then(resultat => resultat.text())
+      .then(jwt => localStorage.setItem('jwt', jwt));
+
+  }
+
+  function chargementDonnees() {
+
+    fetch("http://localhost:8080/utilisateur", { headers: { Authorization: "Bearer " + localStorage.getItem('jwt') } })
+      .then(resultat => resultat.json())
+      .then(liste => {
+
+        const ul = document.getElementById("liste-utilisateur")
+
+        liste.forEach(utilisateur => {
+          const li = document.createElement("li")
+          li.innerHTML = utilisateur.email
+          ul.appendChild(li)
+        });
+
+      })
+  }
+
+</script>

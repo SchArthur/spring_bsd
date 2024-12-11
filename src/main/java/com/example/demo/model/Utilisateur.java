@@ -35,6 +35,8 @@ public class Utilisateur {
 
     String password;
 
+    String code;
+
     @ManyToOne
     Droit droit;
 
@@ -47,4 +49,7 @@ public class Utilisateur {
     )
     List<Tache> tachesAffectees = new ArrayList<>();
 
+    public void setCode(String code) {
+        this.code = code.toUpperCase();
+    }
 }
