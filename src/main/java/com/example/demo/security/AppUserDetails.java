@@ -23,10 +23,7 @@ public class AppUserDetails implements UserDetails {
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
 
-        if (utilisateur.getAdministrateur())
-            return List.of(new SimpleGrantedAuthority("ROLE_ADMINISTRATEUR"));
-
-        return List.of(new SimpleGrantedAuthority("ROLE_UTILISATEUR"));
+        return List.of(new SimpleGrantedAuthority("ROLE_" + utilisateur.getDroit().getNom()));
     }
 
     @Override
@@ -36,7 +33,7 @@ public class AppUserDetails implements UserDetails {
 
     @Override
     public String getUsername() {
-        return utilisateur.getEmail();
+        return utilisateur.getPseudo();
     }
 
     @Override

@@ -3,10 +3,7 @@ package com.example.demo.model;
 import com.example.demo.view.CompetenceView;
 import com.example.demo.view.UtilisateurAvecCompetenceView;
 import com.example.demo.view.UtilisateurView;
-import com.fasterxml.jackson.annotation.JsonIdentityInfo;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonView;
-import com.fasterxml.jackson.annotation.ObjectIdGenerators;
+import com.fasterxml.jackson.annotation.*;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
@@ -17,6 +14,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.context.annotation.Primary;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @AllArgsConstructor
@@ -32,29 +30,21 @@ public class Utilisateur {
     Integer id;
 
     @Column(length = 100, unique = true)
-    @NotBlank(message = "L'email ne peut pas être vide")
-    @Pattern(
-            regexp = "^[\\w.%+-]+@[\\w.-]+\\.[a-zA-Z]{2,}$",
-            message = "L'email doit être valide et contenir une extension d'au moins 2 caractères."
-    )
-    @JsonView({UtilisateurView.class})
-    String email;
+    @NotBlank(message = "Le pseudo ne peut pas être vide")
+    String pseudo;
 
-    //@NotBlank(message = "Le mot de passe ne peut pas être vide")
     String password;
 
-    Boolean administrateur;
-
     @ManyToOne
-    @JsonView(CompetenceView.class)
-    Status status;
+    Droit droit;
 
-    @ManyToMany(fetch = FetchType.EAGER)
+    @JsonIgnore
+    @ManyToMany
     @JoinTable(
-            name = "competence_utilisateur",
+            name = "tache_utilisateur",
             joinColumns = @JoinColumn(name = "utilisateur_id"),
-            inverseJoinColumns = @JoinColumn(name = "competence_id")
+            inverseJoinColumns = @JoinColumn(name = "tache_id")
     )
-    @JsonView({UtilisateurAvecCompetenceView.class})
-    List<Competence> competences;
+    List<Tache> tachesAffectees = new ArrayList<>();
+
 }

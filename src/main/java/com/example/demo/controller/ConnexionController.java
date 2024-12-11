@@ -1,11 +1,10 @@
 package com.example.demo.controller;
 
 import com.example.demo.dao.UtilisateurDao;
-import com.example.demo.model.Status;
+import com.example.demo.model.Droit;
 import com.example.demo.model.Utilisateur;
 import com.example.demo.security.AppUserDetails;
 import com.example.demo.security.JwtUtils;
-import org.apache.tomcat.util.net.openssl.ciphers.Authentication;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -37,10 +36,10 @@ public class ConnexionController {
     public ResponseEntity<Map<String,Object>> inscription(@RequestBody Utilisateur utilisateur) {
 
         utilisateur.setPassword(encoder.encode(utilisateur.getPassword()));
-        utilisateur.setAdministrateur(false);
-        Status disponible = new Status();
-        disponible.setId(1);
-        utilisateur.setStatus(disponible);
+
+        Droit droitEmploye = new Droit();
+        droitEmploye.setId(1);
+        utilisateur.setDroit(droitEmploye);
 
         utilisateurDao.save(utilisateur);
 
@@ -54,7 +53,7 @@ public class ConnexionController {
             AppUserDetails appUserDetails = (AppUserDetails) authenticationProvider
                     .authenticate(
                         new UsernamePasswordAuthenticationToken(
-                                utilisateur.getEmail(),
+                                utilisateur.getPseudo(),
                                 utilisateur.getPassword()))
                     .getPrincipal();
 

@@ -17,12 +17,12 @@ public class AppUserDetailsService implements UserDetailsService {
     UtilisateurDao utilisateurDao;
 
     @Override
-    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
+    public UserDetails loadUserByUsername(String pseudo) throws UsernameNotFoundException {
 
-        Optional<Utilisateur> optionalUtilisateur = utilisateurDao.findByEmail(email);
+        Optional<Utilisateur> optionalUtilisateur = utilisateurDao.findByPseudo(pseudo);
 
         if (optionalUtilisateur.isEmpty()) {
-            throw new UsernameNotFoundException("Email introuvable");
+            throw new UsernameNotFoundException("Pseudo introuvable");
         }
 
         return new AppUserDetails(optionalUtilisateur.get());

@@ -2,7 +2,6 @@ package com.example.demo.model;
 
 import com.example.demo.view.CompetenceView;
 import com.example.demo.view.UtilisateurAvecCompetenceView;
-import com.example.demo.view.UtilisateurView;
 import com.fasterxml.jackson.annotation.JsonView;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -18,17 +17,11 @@ import java.util.List;
 @Getter
 @Setter
 @Entity
-public class Competence {
+public class Droit {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @JsonView(CompetenceView.class)
     Integer id;
 
-    @JsonView({UtilisateurAvecCompetenceView.class, CompetenceView.class})
     String nom;
-
-    @ManyToMany(mappedBy = "competences")
-    @JsonView(CompetenceView.class)
-    List<Utilisateur> utilisateurs = new ArrayList<>();
 }

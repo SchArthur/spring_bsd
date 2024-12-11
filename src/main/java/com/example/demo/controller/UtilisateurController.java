@@ -1,11 +1,13 @@
 package com.example.demo.controller;
 
+import com.example.demo.dao.TacheDao;
 import com.example.demo.dao.UtilisateurDao;
-import com.example.demo.model.Status;
+import com.example.demo.model.Droit;
+import com.example.demo.model.Tache;
 import com.example.demo.model.Utilisateur;
 import com.example.demo.security.AppUserDetails;
 import com.example.demo.security.IsAdmin;
-import com.example.demo.security.IsUser;
+import com.example.demo.security.IsEmploye;
 import com.example.demo.view.UtilisateurAvecCompetenceView;
 import com.example.demo.view.UtilisateurView;
 import com.fasterxml.jackson.annotation.JsonView;
@@ -17,8 +19,6 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
-import java.security.Principal;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -30,9 +30,29 @@ public class UtilisateurController {
     private UtilisateurDao utilisateurDao;
 
     @Autowired
+    private TacheDao tacheDao;
+
+    @Autowired
     BCryptPasswordEncoder encoder;
 
-    @IsUser
+    @GetMapping("/utilisateur/tache/{id}")
+    public ResponseEntity<List<Tache>> tacheUtilisateur(@PathVariable int id) {
+        Optional<Utilisateur> optionalUtilisateur = utilisateurDao.findById(id);
+
+        //si l'utilisateur n'existe pas
+        if(optionalUtilisateur.isEmpty()) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+
+        //solution 1
+//      return ResponseEntity.ok(optionalUtilisateur.get().getTachesAffectees());
+
+        //solution 2
+        return ResponseEntity.ok(tacheDao.tacheAffecte(id));
+    }
+
+
+    @IsEmploye
     @GetMapping("/utilisateur")
     @JsonView(UtilisateurView.class)
     public List<Utilisateur> getAll() {
@@ -41,7 +61,7 @@ public class UtilisateurController {
 
     }
 
-    @IsUser
+    @IsEmploye
     @GetMapping("/utilisateur/{id}")
     @JsonView(UtilisateurAvecCompetenceView.class)
     public ResponseEntity<Utilisateur> get(@PathVariable Integer id) {
@@ -66,10 +86,10 @@ public class UtilisateurController {
         utilisateur.setId(null);
 
         utilisateur.setPassword(encoder.encode(utilisateur.getPassword()));
-        utilisateur.setAdministrateur(false);
-        Status disponible = new Status();
-        disponible.setId(1);
-        utilisateur.setStatus(disponible);
+
+        Droit droitEmploye = new Droit();
+        droitEmploye.setId(1);
+        utilisateur.setDroit(droitEmploye);
 
         utilisateurDao.save(utilisateur);
 
@@ -92,36 +112,10 @@ public class UtilisateurController {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
 
-        Utilisateur utilisateurBaseDeDonne = optionalUtilisateur.get();
-
-        //On recupère de la base de donnée toutes les informations
-        // que l'on ne veut pas laisser l'utilisateur modifier
-        utilisateurEnvoye.setStatus(utilisateurBaseDeDonne.getStatus());
-
         //Si l'utilisateur a un nouveau mot de passe, on le hash le nouveau
         if(utilisateurEnvoye.getPassword() != null) {
             utilisateurEnvoye.setPassword(encoder.encode(utilisateurEnvoye.getPassword()));
         }
-
-        //si le json envoyé n'a pas de competences, on gardent les anciennes
-        // (mais si le json contient un tableau vide pour les competences,
-        // alors elles seront bien supprimées)
-        if(utilisateurEnvoye.getCompetences() == null) {
-            utilisateurEnvoye.setCompetences(utilisateurBaseDeDonne.getCompetences());
-        }
-        //idem pour status
-        if(utilisateurEnvoye.getStatus() == null) {
-            utilisateurEnvoye.setStatus(utilisateurBaseDeDonne.getStatus());
-        }
-        //idem pour administrateur
-        if(utilisateurEnvoye.getAdministrateur() == null) {
-            utilisateurEnvoye.setAdministrateur(utilisateurBaseDeDonne.getAdministrateur());
-        }
-        //Note : on évalue la présence de chaque propriété, mais dans le cas d'une application front
-        //(ex : angular, vue, react, android, ios ...) cela ne serait pas nécessaire, puisque l'on
-        //aurait récupéré au préalable l'objet entier (ca depend de l'usage de l'api, ici on a pris
-        // le parti de laisser la possibilité de n'envoyer qu'une partie des information à mettre à jour)
-
 
         utilisateurDao.save(utilisateurEnvoye);
 
@@ -146,7 +140,7 @@ public class UtilisateurController {
 
     }
 
-    @IsUser
+    @IsEmploye
     @GetMapping("/profil")
     public ResponseEntity<Utilisateur> profil(@AuthenticationPrincipal AppUserDetails userDetails) {
 

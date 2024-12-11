@@ -1,26 +1,24 @@
 package com.example.demo.model;
 
-import com.example.demo.view.CompetenceView;
-import com.fasterxml.jackson.annotation.JsonView;
-import jakarta.persistence.*;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-
-import java.util.List;
 
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
 @Setter
 @Entity
-public class Status {
+public class Priorite {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Integer id;
 
-    @JsonView(CompetenceView.class)
-    String designation;
+    String nom;
 }
